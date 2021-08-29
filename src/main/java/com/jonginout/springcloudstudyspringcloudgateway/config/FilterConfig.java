@@ -30,6 +30,13 @@ public class FilterConfig {
                                 .rewritePath("/user-service/(?<segment>.*)", "/${segment}")
                         )
                         .uri("lb://USER-SERVICE"))
+                .route(r -> r.path("/user-service/actuator/**").and()
+                        .method(HttpMethod.GET, HttpMethod.POST)
+                        .filters(f ->
+                                f.removeRequestHeader("Cookie")
+                                        .rewritePath("/user-service/(?<segment>.*)", "/${segment}")
+                        )
+                        .uri("lb://USER-SERVICE"))
                 .route(r -> r.path("/user-service/**").and()
                         .method(HttpMethod.GET)
                         .filters(f ->
@@ -40,13 +47,6 @@ public class FilterConfig {
                                                 new AuthorizationHeaderFilter.Config()
                                         )
                                 )
-                        )
-                        .uri("lb://USER-SERVICE"))
-                .route(r -> r.path("/user-service/actuator/**").and()
-                        .method(HttpMethod.GET, HttpMethod.POST)
-                        .filters(f ->
-                                f.removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}")
                         )
                         .uri("lb://USER-SERVICE"))
                 .route(r -> r.path("/catalog-service/**")
